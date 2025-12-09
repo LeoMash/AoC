@@ -1,6 +1,15 @@
 f = '9.in'
 N = 100000
 SCALE = 100
+RECT1 = (57, 315)
+RECT2 = (220, 248)
+
+# f = '9_test.in'
+# N = 15
+# SCALE = 1 / 60
+# RECT1 = (1, 5)
+# RECT2 = (4, 6)
+
 D = open(f).read().strip().splitlines()
 
 C = []
@@ -25,7 +34,7 @@ for i in range(len(C)):
 
 draw.polygon(polygon_points, fill="lightblue", outline="blue")
 
-i, j = (315, 57)
+i, j = RECT1
 x1, y1 = C[i]
 x2, y2 = C[j]
 a1 = min(x1, x2) / SCALE
@@ -34,7 +43,7 @@ a2 = max(x1, x2) / SCALE
 b2 = max(y1, y2) / SCALE
 draw.rectangle(((a1, b1), (a2, b2)), outline="red")
 
-i, j = (248, 220)
+i, j = RECT2
 x1, y1 = C[i]
 x2, y2 = C[j]
 a1 = min(x1, x2) / SCALE
