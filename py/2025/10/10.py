@@ -5,50 +5,56 @@ f = '10.in'
 D = open(f).read().strip().splitlines()
 L = []
 
-RE = re.compile('^\[(.*)\] (\(.*\))+ {(.*)}$')
+RE = re.compile(r'^\[(.*)] (\(.*\))+ {(.*)}$')
 for line in D:
     m = RE.match(line)
     assert m is not None
     l = m.group(1)
     t = m.group(2)
-    t = t.replace('(', '')
-    t = t.replace(')', '')
-    t = t.split()
+    t = t.replace('(', '').replace(')', '').split()
     t = [list(map(int, x.split(','))) for x in t]
     j = list(map(int, m.group(3).split(',')))
     L.append((l,j,t))
 
-import sys
-sys.setrecursionlimit(200000)
+
+import itertools
 
 ans1 = 0
 for l in L:
     print(l)
-    V = tuple([0] * len(l[0]))
-    VT = tuple([0 if x == '.' else 1 for x in l[0]])
-    print(VT)
+    V = 0
+    VT = int(l[0].replace('#', '1').replace('.', '0')[::-1], 2)
+    print(f"{VT:b}")
+    T = l[2]
+    T_MASKS = []
+    for t in T:
+        t_mask = 0
+        for tt in t:
+            t_mask |= (1 << tt)
+        T_MASKS.append(t_mask)
+    print([f"{m:b}" for m in T_MASKS])
+    N = len(T)
+    minsize = 0
+    for t in range(1, N):
+        for toggles in itertools.combinations(T_MASKS, t):
+            mask = 0
+            for m in toggles:
+                mask ^= m
+            if mask == VT:
+                break
+        else:
+            continue
+        minsize = t
+        break
+    else:
+        assert False
 
-    DIST = {}
-    def go(v, dist):
-        if v in DIST:
-            d = DIST[v]
-            if d <= dist:
-                return
-        DIST[v] = dist
-        if v == VT:
-            return
-        toggles = l[2]
-        for toggle in toggles:
-            Vn = list(v)
-            for tt in toggle:
-                Vn[tt] = 0 if Vn[tt] else 1
-            vn = tuple(Vn)
-            go(vn, dist + 1)
+    print(minsize)
+    ans1 += minsize
 
-    go(V, 0)
-    mindist = DIST[VT]
-    print(mindist)
 print(ans1)
+
+print("**********")
 
 # ans2 = 0
 # for l in L:
